@@ -1,0 +1,10 @@
+/*.7z
+/20??-??-??/
+
+/vc++2017/.vs/
+/vc++2017/bin/
+/vc++2017/build*/
+/vc++2017/obj/
+/vc++2017/pecos.bat
+/vc++2017/pecos.sln
+/vc++2017/pecos.vcxproj.user
