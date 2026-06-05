@@ -1,8 +1,7 @@
 /*
-	SEGA SC-3000 Emulator 'epecos'
+	ASIEL PECOS Emulator 'ePECOS'
 
-	Original Author : Takeda.Toshiya
-	Modifications : Charles Doty
+	Author: cdoty
 	Date   : 2026.06.05-
 
 	[ virtual machine ]

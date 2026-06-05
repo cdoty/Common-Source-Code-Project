@@ -1,8 +1,8 @@
 /*
-	SEGA SC-3000 Emulator 'eSC-3000'
+	ASIEL PECOS Emulator 'ePECOS'
 
-	Author : Takeda.Toshiya
-	Date   : 2010.08.17-
+	Author: cdoty
+	Date   : 2026.06.05-
 
 	[ virtual machine ]
 */

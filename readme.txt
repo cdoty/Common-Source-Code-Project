@@ -10,7 +10,7 @@ This archive includes the all source codes of emulators listed below:
 		yayaMSX2	MSX2 (by Mr.tanam and Mr.umaiboux)
 		yayaMSX2+	MSX2+ (by Mr.umaiboux)
 	ASIEL
-		ePecos		Pecos
+		ePECOS		PECOS
 	BANDAI
 		eRX-78		RX-78
 	CANON
