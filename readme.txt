@@ -1,5 +1,5 @@
 retro pc emulator common source code
-								11/9/2025
+								6/5/2026
 
 --- What's this ?
 
@@ -9,6 +9,8 @@ This archive includes the all source codes of emulators listed below:
 		yayaMSX1	MSX1 (by Mr.tanam and Mr.umaiboux)
 		yayaMSX2	MSX2 (by Mr.tanam and Mr.umaiboux)
 		yayaMSX2+	MSX2+ (by Mr.umaiboux)
+	ASIEL
+		ePecos		Pecos
 	BANDAI
 		eRX-78		RX-78
 	CANON

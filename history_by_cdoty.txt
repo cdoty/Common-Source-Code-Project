@@ -1,0 +1,3 @@
+6/5/2026
+[Pecos] Added preliminary Pecos support based on SC-3000 driver.
+[TVBoy] Merged TVBoy support for Inufuto's cartridge (thanks Mr.tanam)
