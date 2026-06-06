@@ -13,13 +13,11 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// Japanese resources
+// Japanese (Japan) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_JPN)
-#ifdef _WIN32
 LANGUAGE LANG_JAPANESE, SUBLANG_DEFAULT
 #pragma code_page(932)
-#endif //_WIN32
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -27,18 +25,18 @@ LANGUAGE LANG_JAPANESE, SUBLANG_DEFAULT
 // TEXTINCLUDE
 //
 
-1 TEXTINCLUDE DISCARDABLE 
+1 TEXTINCLUDE 
 BEGIN
     "resource.h\0"
 END
 
-2 TEXTINCLUDE DISCARDABLE 
+2 TEXTINCLUDE 
 BEGIN
     "#include ""afxres.h""\r\n"
     "\0"
 END
 
-3 TEXTINCLUDE DISCARDABLE 
+3 TEXTINCLUDE 
 BEGIN
     "\r\n"
     "\0"
@@ -46,25 +44,23 @@ END
 
 #endif    // APSTUDIO_INVOKED
 
-#endif    // Japanese resources
+#endif    // Japanese (Japan) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-// English (U.S.) resources
+// English (United States) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Accelerator
 //
 
-IDR_ACCELERATOR1 ACCELERATORS DISCARDABLE 
+IDR_ACCELERATOR1 ACCELERATORS
 BEGIN
     VK_RETURN,      ID_ACCEL_SCREEN,        VIRTKEY, ALT, NOINVERT
     VK_APPS,        ID_ACCEL_SPEED,         VIRTKEY, NOINVERT
@@ -77,7 +73,7 @@ END
 // Menu
 //
 
-IDR_MENU1 MENU DISCARDABLE 
+IDR_MENU1 MENU
 BEGIN
     POPUP "Control"
     BEGIN
@@ -97,29 +93,29 @@ BEGIN
         MENUITEM SEPARATOR
         POPUP "Save State"
         BEGIN
-            MENUITEM "State 0",                 ID_SAVE_STATE0
-            MENUITEM "State 1",                 ID_SAVE_STATE1
-            MENUITEM "State 2",                 ID_SAVE_STATE2
-            MENUITEM "State 3",                 ID_SAVE_STATE3
-            MENUITEM "State 4",                 ID_SAVE_STATE4
-            MENUITEM "State 5",                 ID_SAVE_STATE5
-            MENUITEM "State 6",                 ID_SAVE_STATE6
-            MENUITEM "State 7",                 ID_SAVE_STATE7
-            MENUITEM "State 8",                 ID_SAVE_STATE8
-            MENUITEM "State 9",                 ID_SAVE_STATE9
+            MENUITEM "State 0",                     ID_SAVE_STATE0
+            MENUITEM "State 1",                     ID_SAVE_STATE1
+            MENUITEM "State 2",                     ID_SAVE_STATE2
+            MENUITEM "State 3",                     ID_SAVE_STATE3
+            MENUITEM "State 4",                     ID_SAVE_STATE4
+            MENUITEM "State 5",                     ID_SAVE_STATE5
+            MENUITEM "State 6",                     ID_SAVE_STATE6
+            MENUITEM "State 7",                     ID_SAVE_STATE7
+            MENUITEM "State 8",                     ID_SAVE_STATE8
+            MENUITEM "State 9",                     ID_SAVE_STATE9
         END
         POPUP "Load State"
         BEGIN
-            MENUITEM "State 0",                 ID_LOAD_STATE0
-            MENUITEM "State 1",                 ID_LOAD_STATE1
-            MENUITEM "State 2",                 ID_LOAD_STATE2
-            MENUITEM "State 3",                 ID_LOAD_STATE3
-            MENUITEM "State 4",                 ID_LOAD_STATE4
-            MENUITEM "State 5",                 ID_LOAD_STATE5
-            MENUITEM "State 6",                 ID_LOAD_STATE6
-            MENUITEM "State 7",                 ID_LOAD_STATE7
-            MENUITEM "State 8",                 ID_LOAD_STATE8
-            MENUITEM "State 9",                 ID_LOAD_STATE9
+            MENUITEM "State 0",                     ID_LOAD_STATE0
+            MENUITEM "State 1",                     ID_LOAD_STATE1
+            MENUITEM "State 2",                     ID_LOAD_STATE2
+            MENUITEM "State 3",                     ID_LOAD_STATE3
+            MENUITEM "State 4",                     ID_LOAD_STATE4
+            MENUITEM "State 5",                     ID_LOAD_STATE5
+            MENUITEM "State 6",                     ID_LOAD_STATE6
+            MENUITEM "State 7",                     ID_LOAD_STATE7
+            MENUITEM "State 8",                     ID_LOAD_STATE8
+            MENUITEM "State 9",                     ID_LOAD_STATE9
         END
         MENUITEM SEPARATOR
         MENUITEM "Debug Main CPU",              ID_OPEN_DEBUGGER0
@@ -127,7 +123,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Exit",                        ID_EXIT
     END
-    POPUP "Cart"
+    POPUP "Module"
     BEGIN
         MENUITEM "Insert",                      ID_OPEN_CART1
         MENUITEM "Eject",                       ID_CLOSE_CART1
@@ -165,10 +161,10 @@ BEGIN
     BEGIN
         POPUP "Sound"
         BEGIN
-            MENUITEM "Play FDD Noise",          ID_VM_SOUND_NOISE_FDD
-            MENUITEM "Play CMT Noise",          ID_VM_SOUND_NOISE_CMT
-            MENUITEM "Play CMT Signal",         ID_VM_SOUND_TAPE_SIGNAL
-            MENUITEM "Play CMT Voice",          ID_VM_SOUND_TAPE_VOICE
+            MENUITEM "Play FDD Noise",              ID_VM_SOUND_NOISE_FDD
+            MENUITEM "Play CMT Noise",              ID_VM_SOUND_NOISE_CMT
+            MENUITEM "Play CMT Signal",             ID_VM_SOUND_TAPE_SIGNAL
+            MENUITEM "Play CMT Voice",              ID_VM_SOUND_TAPE_VOICE
         END
     END
     POPUP "Host"
@@ -182,44 +178,44 @@ BEGIN
         MENUITEM SEPARATOR
         POPUP "Screen"
         BEGIN
-            MENUITEM "Window x1",               ID_SCREEN_WINDOW
-            MENUITEM "Fullscreen 640x400",      ID_SCREEN_FULLSCREEN
+            MENUITEM "Window x1",                   ID_SCREEN_WINDOW
+            MENUITEM "Fullscreen 640x400",          ID_SCREEN_FULLSCREEN
             MENUITEM SEPARATOR
-            MENUITEM "Fullscreen Stretch 1",    ID_SCREEN_FULLSCREEN_DOTBYDOT
-            MENUITEM "Fullscreen Stretch 2",    ID_SCREEN_FULLSCREEN_STRETCH
-            MENUITEM "Fullscreen Stretch 4",    ID_SCREEN_FULLSCREEN_FILL
+            MENUITEM "Fullscreen Stretch 1",        ID_SCREEN_FULLSCREEN_DOTBYDOT
+            MENUITEM "Fullscreen Stretch 2",        ID_SCREEN_FULLSCREEN_STRETCH
+            MENUITEM "Fullscreen Stretch 4",        ID_SCREEN_FULLSCREEN_FILL
             MENUITEM SEPARATOR
-            MENUITEM "Rotate 0deg",             ID_SCREEN_ROTATE_0
-            MENUITEM "Rotate +90deg",           ID_SCREEN_ROTATE_90
-            MENUITEM "Rotate 180deg",           ID_SCREEN_ROTATE_180
-            MENUITEM "Rotate -90deg",           ID_SCREEN_ROTATE_270
+            MENUITEM "Rotate 0deg",                 ID_SCREEN_ROTATE_0
+            MENUITEM "Rotate +90deg",               ID_SCREEN_ROTATE_90
+            MENUITEM "Rotate 180deg",               ID_SCREEN_ROTATE_180
+            MENUITEM "Rotate -90deg",               ID_SCREEN_ROTATE_270
         END
         POPUP "Sound"
         BEGIN
-            MENUITEM "2000Hz",                  ID_SOUND_FREQ0
-            MENUITEM "4000Hz",                  ID_SOUND_FREQ1
-            MENUITEM "8000Hz",                  ID_SOUND_FREQ2
-            MENUITEM "11025Hz",                 ID_SOUND_FREQ3
-            MENUITEM "22050Hz",                 ID_SOUND_FREQ4
-            MENUITEM "44100Hz",                 ID_SOUND_FREQ5
-            MENUITEM "48000Hz",                 ID_SOUND_FREQ6
-            MENUITEM "96000Hz",                 ID_SOUND_FREQ7
+            MENUITEM "2000Hz",                      ID_SOUND_FREQ0
+            MENUITEM "4000Hz",                      ID_SOUND_FREQ1
+            MENUITEM "8000Hz",                      ID_SOUND_FREQ2
+            MENUITEM "11025Hz",                     ID_SOUND_FREQ3
+            MENUITEM "22050Hz",                     ID_SOUND_FREQ4
+            MENUITEM "44100Hz",                     ID_SOUND_FREQ5
+            MENUITEM "48000Hz",                     ID_SOUND_FREQ6
+            MENUITEM "96000Hz",                     ID_SOUND_FREQ7
             MENUITEM SEPARATOR
-            MENUITEM "50msec",                  ID_SOUND_LATE0
-            MENUITEM "100msec",                 ID_SOUND_LATE1
-            MENUITEM "200msec",                 ID_SOUND_LATE2
-            MENUITEM "300msec",                 ID_SOUND_LATE3
-            MENUITEM "400msec",                 ID_SOUND_LATE4
+            MENUITEM "50msec",                      ID_SOUND_LATE0
+            MENUITEM "100msec",                     ID_SOUND_LATE1
+            MENUITEM "200msec",                     ID_SOUND_LATE2
+            MENUITEM "300msec",                     ID_SOUND_LATE3
+            MENUITEM "400msec",                     ID_SOUND_LATE4
             MENUITEM SEPARATOR
-            MENUITEM "Realtime Mix",            ID_SOUND_STRICT_RENDER
-            MENUITEM "Light Weight Mix",        ID_SOUND_LIGHT_RENDER
+            MENUITEM "Realtime Mix",                ID_SOUND_STRICT_RENDER
+            MENUITEM "Light Weight Mix",            ID_SOUND_LIGHT_RENDER
             MENUITEM SEPARATOR
-            MENUITEM "Volume",                  ID_SOUND_VOLUME
+            MENUITEM "Volume",                      ID_SOUND_VOLUME
         END
         POPUP "Input"
         BEGIN
-            MENUITEM "Joystick #1",             ID_INPUT_JOYSTICK0
-            MENUITEM "Joystick #2",             ID_INPUT_JOYSTICK1
+            MENUITEM "Joystick #1",                 ID_INPUT_JOYSTICK0
+            MENUITEM "Joystick #2",                 ID_INPUT_JOYSTICK1
         END
         MENUITEM SEPARATOR
         MENUITEM "Use Direct2D1",               ID_HOST_USE_D2D1
@@ -234,12 +230,14 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// Image
+// Bitmap
 //
 
-IDI_BITMAP_ACCESS_OFF   BITMAP  DISCARDABLE     "indicator/access_off.bmp"
-IDI_BITMAP_ACCESS_ON    BITMAP  DISCARDABLE     "indicator/access_on.bmp"
-IDI_BITMAP_ACCESS_ON2   BITMAP  DISCARDABLE     "indicator/access_green.bmp"
+IDI_BITMAP_ACCESS_OFF   BITMAP                  "indicator/access_off.bmp"
+
+IDI_BITMAP_ACCESS_ON    BITMAP                  "indicator/access_on.bmp"
+
+IDI_BITMAP_ACCESS_ON2   BITMAP                  "indicator/access_green.bmp"
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -249,9 +247,7 @@ IDI_BITMAP_ACCESS_ON2   BITMAP  DISCARDABLE     "indicator/access_green.bmp"
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_ICON1               ICON    DISCARDABLE     "pecos.ico"
-#endif    // English (U.S.) resources
-/////////////////////////////////////////////////////////////////////////////
+IDI_ICON1               ICON                    "pecos.ico"
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -259,8 +255,8 @@ IDI_ICON1               ICON    DISCARDABLE     "pecos.ico"
 // Dialog
 //
 
-IDD_VOLUME DIALOG DISCARDABLE  0, 0, 250, 150
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_VOLUME DIALOG 0, 0, 250, 150
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Volume"
 FONT 9, "MS PGothic"
 BEGIN
@@ -280,8 +276,8 @@ BEGIN
     DEFPUSHBUTTON   "Reset",IDC_VOLUME_RESET,130,130,50,14
 END
 
-IDD_JOYSTICK DIALOG DISCARDABLE  0, 0, 175, 120
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_JOYSTICK DIALOG 0, 0, 175, 120
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Joystick #1"
 FONT 9, "MS PGothic"
 BEGIN
@@ -300,6 +296,9 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,35,100,50,14
     DEFPUSHBUTTON   "Reset",IDC_JOYSTICK_RESET,90,100,50,14
 END
+
+#endif    // English (United States) resources
+/////////////////////////////////////////////////////////////////////////////
 
 
 
