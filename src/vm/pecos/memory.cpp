@@ -27,7 +27,10 @@
 
 void MEMORY::initialize()
 {
-//	memset(cart, 0xff, sizeof(cart));
+	ram_selected	= false;
+	module_byte_index	= 0;
+
+	memset(module, 0xff, sizeof(module));
 	memset(ipl, 0xff, sizeof(ipl));
 	memset(ram, 0, sizeof(ram));
 	memset(rdmy, 0xff, sizeof(rdmy));
@@ -43,7 +46,7 @@ void MEMORY::initialize()
 	delete fio;
 	
 	// set memory map
-	close_cart();
+	close_module();
 }
 
 void MEMORY::write_data8(uint32_t addr, uint32_t data)
@@ -64,19 +67,14 @@ uint32_t MEMORY::read_data8(uint32_t addr)
 	return rbank[addr >> 12][addr & 0xfff];
 }
 
-void MEMORY::write_io8w(uint32_t addr, uint32_t data, int* wait)
-{
-	ram_selected = (data != 0);
-}
-
-void MEMORY::open_cart(const _TCHAR* file_path)
+void MEMORY::open_module(const _TCHAR* file_path)
 {
 	FILEIO* fio = new FILEIO();
 	
 	if(fio->Fopen(file_path, FILEIO_READ_BINARY)) {
-		memset(cart, 0xff, sizeof(cart));
-		fio->Fread(cart, sizeof(cart), 1);
-		if(fio->Ftell() > 0x8000) {
+		memset(module, 0xff, sizeof(module));
+		fio->Fread(module, sizeof(module), 1);
+		if(fio->Ftell() > 0x8000 + MODULE_HEADER_SIZE) {
 			// ホーム麻雀(32KB+16KB) or ロレッタの肖像(128KB)
 			bank[0] = 0;
 			bank[1] = 1;
@@ -86,19 +84,19 @@ void MEMORY::open_cart(const _TCHAR* file_path)
 		}
 		fio->Fclose();
 		inserted = true;
-		ram_selected = false;
 		
 		// set memory map
 		update_bank();
 	}
 	delete fio;
+
+	emu->reset();
 }
 
-void MEMORY::close_cart()
+void MEMORY::close_module()
 {
-	memset(cart, 0xff, sizeof(cart));
+	memset(module, 0xff, sizeof(module));
 	inserted = false;
-	ram_selected = false;
 	bank[0] = bank[1] = bank[2] = 0xff;
 	
 	// set memory map
@@ -108,11 +106,11 @@ void MEMORY::close_cart()
 void MEMORY::update_bank()
 {
 	if(!inserted) {
-		SET_BANK(0x0000, 0x0fff, ram + 0x0000, ipl);
+		SET_BANK(0x0000, 0x1fff, ram + 0x0000, ipl);
 		SET_BANK(0x2000, 0xffff, ram + 0x2000, ram + 0x2000);
 	}
 	if(ram_selected) {
-		SET_BANK(0x0000, 0x0fff, ram, ram);
+		SET_BANK(0x0000, 0x1fff, ram, ram);
 	}
 }
 
@@ -138,3 +136,40 @@ bool MEMORY::process_state(FILEIO* state_fio, bool loading)
 	return true;
 }
 
+void MEMORY::write_io8w(uint32_t addr, uint32_t data, int* wait)
+{
+	if (0x40 == (addr & 0xFF))
+	{
+		ram_selected = (data != 0);
+
+		update_bank();
+	}
+
+	else if (0x80 == (addr & 0xFF))
+	{
+		// Start module loader
+		if (true == inserted)
+		{
+			module_byte_index	= 0;
+		}
+
+	}
+}
+
+uint32_t MEMORY::read_io8w(uint32_t addr, int* wait)
+{
+	if (0x80 == (addr & 0xFF) && true == inserted)
+	{
+		// Load module byte
+		if (module_byte_index < sizeof(module))
+		{
+			uint32_t	value	= module[module_byte_index];
+			
+			module_byte_index++;
+
+			return	value;
+		}
+	}
+
+	return	0xFF;
+}

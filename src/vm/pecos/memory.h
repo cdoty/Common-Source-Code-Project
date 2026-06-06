@@ -14,14 +14,14 @@
 #include "../../emu.h"
 #include "../device.h"
 
-#define SIG_MEMORY_SEL	0
+#define	MODULE_HEADER_SIZE	8	// It is 9 for the non patched bios, but the bios only uses 8 bytes.
 
 class MEMORY : public DEVICE
 {
-private:
+private:	
 	// memory
-	uint8_t cart[0x20000];
-	uint8_t ipl[0x1000];	// PECOS bios
+	uint8_t module[0x10000 + MODULE_HEADER_SIZE];	// Module file
+	uint8_t ipl[0x1000];			// PECOS bios
 	uint8_t ram[0x10000];
 	
 	uint8_t wdmy[0x1000];
@@ -31,6 +31,7 @@ private:
 	
 	bool inserted;
 	bool ram_selected;
+	int module_byte_index;
 	uint8_t bank[3];
 	
 	void update_bank();
@@ -49,14 +50,15 @@ public:
 	bool process_state(FILEIO* state_fio, bool loading);
 	
 	// unique functions
-	void open_cart(const _TCHAR* file_path);
-	void close_cart();
-	bool is_cart_inserted()
+	void open_module(const _TCHAR* file_path);
+	void close_module();
+	bool is_module_inserted()
 	{
 		return inserted;
 	}
 
 	void write_io8w(uint32_t addr, uint32_t data, int* wait) override;
+	uint32_t read_io8w(uint32_t addr, int* wait) override;
 };
 
 #endif

@@ -101,9 +101,12 @@ VM::VM(EMU* parent_emu) : VM_TEMPLATE(parent_emu)
 #endif
 	
 	// i/o bus
+	io->set_iomap_single_w(0x30, key);			// Port 0x30 keyboard select
+	io->set_iomap_single_r(0x50, key);			// Port 0x50 keyboard read
 	io->set_iomap_single_w(0x40, memory);		// Port 0x40 selects between RAM and BIOS
-	io->set_iomap_range_rw(0x60, 0x6f, psg);
+	io->set_iomap_single_rw(0x80, memory);		// Port 0x80 selects module(?)
 	io->set_iomap_range_rw(0x70, 0x71, vdp);
+	io->set_iomap_range_rw(0x9d, 0x9e, psg);
 //	io->set_iomap_range_rw(0xc0, 0xdf, pio_k);
 //	io->set_iomap_range_rw(0xe0, 0xe3, fdc);
 //	io->set_iomap_range_rw(0xe4, 0xe7, pio_f);
@@ -228,7 +231,7 @@ void VM::set_sound_device_volume(int ch, int decibel_l, int decibel_r)
 void VM::open_cart(int drv, const _TCHAR* file_path)
 {
 	if(drv == 0) {
-		memory->open_cart(file_path);
+		memory->open_module(file_path);
 		reset();
 	}
 }
@@ -236,7 +239,7 @@ void VM::open_cart(int drv, const _TCHAR* file_path)
 void VM::close_cart(int drv)
 {
 	if(drv == 0) {
-		memory->close_cart();
+		memory->close_module();
 		reset();
 	}
 }
@@ -244,7 +247,7 @@ void VM::close_cart(int drv)
 bool VM::is_cart_inserted(int drv)
 {
 	if(drv == 0) {
-		return memory->is_cart_inserted();
+		return memory->is_module_inserted();
 	} else {
 		return false;
 	}

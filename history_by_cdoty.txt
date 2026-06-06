@@ -1,3 +1,9 @@
 6/5/2026
-[Pecos] Added preliminary Pecos support based on SC-3000 driver.
+[PECOS] Added preliminary PECOS support based on SC-3000 driver.
 [TVBoy] Merged TVBoy support for Inufuto's cartridge (thanks Mr.tanam)
+
+6/6/2026
+[PECOS] Created a test keyboard module to trigger module loading. I need to figure out exactly how the keyboard works.
+Created a module loader on port 0x80 that loads from the selected cartridge.
+Fixed an issue in PECOS_BIOS111.rom where the offsets are off by one. The problem could also be that it isn't loading enough bytes. It seems the loading was never used.
+Created an IPS patch for PECOS_BIOS111.rom.

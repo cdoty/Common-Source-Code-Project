@@ -52,6 +52,9 @@ public:
 		d_pio = device;
 	}
 #endif
+
+	void write_io8w(uint32_t addr, uint32_t data, int* wait) override;
+	uint32_t read_io8w(uint32_t addr, int* wait) override;
 };
 
 #endif

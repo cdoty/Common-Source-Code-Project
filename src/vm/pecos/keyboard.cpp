@@ -10,6 +10,8 @@
 #include "keyboard.h"
 #include "../i8255.h"
 
+#define	MODULE_LOADER_MODE
+
 static const uint8_t key_map[8][12] = {
 	{ 0x31, 0x51, 0x41, 0x5a, 0x15, 0xbc, 0x4b, 0x49, 0x38, 0x00, 0x00, 0x00 },
 	{ 0x32, 0x57, 0x53, 0x58, 0x20, 0xbe, 0x4c, 0x4f, 0x39, 0x00, 0x00, 0x00 },
@@ -95,3 +97,37 @@ bool KEYBOARD::process_state(FILEIO* state_fio, bool loading)
 	return true;
 }
 
+void KEYBOARD::write_io8w(uint32_t addr, uint32_t data, int* wait)
+{
+#ifdef MODULE_LOADER_MODE
+	column	= data;
+#endif
+}
+
+uint32_t KEYBOARD::read_io8w(uint32_t addr, int* wait)
+{
+#ifdef MODULE_LOADER_MODE
+	// Keyboard reset
+	if (0xff == column)
+	{
+		return	0x80;
+	}
+
+	else if (0 == column)
+	{
+		return	0x00;
+	}
+
+	else if (1 == column)
+	{
+		return	0x00;
+	}
+
+	else if (4 == column)
+	{
+		return	0x80;
+	}
+#endif
+
+	return	0xFF;
+}
