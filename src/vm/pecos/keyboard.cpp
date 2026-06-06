@@ -73,9 +73,11 @@ void KEYBOARD::update_keyboard()
 			}
 		}
 	}
+#if 0
 	d_pio->write_signal(SIG_I8255_PORT_A, ~data, 0xff);
 	data >>= 8;
 	d_pio->write_signal(SIG_I8255_PORT_B, ~data, 0x0f);
+#endif
 }
 
 #define STATE_VERSION	1

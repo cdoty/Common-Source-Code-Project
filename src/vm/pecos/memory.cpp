@@ -64,13 +64,9 @@ uint32_t MEMORY::read_data8(uint32_t addr)
 	return rbank[addr >> 12][addr & 0xfff];
 }
 
-void MEMORY::write_signal(int id, uint32_t data, uint32_t mask)
+void MEMORY::write_io8w(uint32_t addr, uint32_t data, int* wait)
 {
-	if(id == SIG_MEMORY_SEL) {
-		// from PIO-P6
-		ram_selected = ((data & mask) != 0);
-		update_bank();
-	}
+	ram_selected = (data != 0);
 }
 
 void MEMORY::open_cart(const _TCHAR* file_path)

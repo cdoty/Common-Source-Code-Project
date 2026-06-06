@@ -69,14 +69,14 @@ protected:
 	// devices
 	EVENT* event;
 	
-	DATAREC* drec;
-	I8251* sio;
-	I8255* pio_k;
-	I8255* pio_f;
+//	DATAREC* drec;
+//	I8251* sio;
+//	I8255* pio_k;
+//	I8255* pio_f;
 	IO* io;
 	SN76489AN* psg;
 	TMS9918A* vdp;
-	UPD765A* fdc;
+//	UPD765A* fdc;
 	Z80* cpu;
 	
 	KEYBOARD* key;
@@ -122,6 +122,7 @@ public:
 	void open_cart(int drv, const _TCHAR* file_path);
 	void close_cart(int drv);
 	bool is_cart_inserted(int drv);
+#if 0
 	void open_floppy_disk(int drv, const _TCHAR* file_path, int bank);
 	void close_floppy_disk(int drv);
 	bool is_floppy_disk_inserted(int drv);
@@ -142,6 +143,7 @@ public:
 	void push_fast_rewind(int drv);
 	void push_apss_forward(int drv) {}
 	void push_apss_rewind(int drv) {}
+#endif
 	bool is_frame_skippable();
 	
 	void update_config();

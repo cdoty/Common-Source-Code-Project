@@ -8,3 +8,5 @@
 /vc++2017/pecos.bat
 /vc++2017/pecos.sln
 /vc++2017/pecos.vcxproj.user
+
+*.aps

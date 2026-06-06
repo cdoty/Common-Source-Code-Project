@@ -17,10 +17,6 @@
       <UniqueIdentifier>{1725352d-57cc-423d-8f63-95fef3b27dea}</UniqueIdentifier>
       <Extensions>cpp</Extensions>
     </Filter>
-    <Filter Include="Source Files\VM Driver Source Files">
-      <UniqueIdentifier>{35b9cb87-90b1-44f7-bbbc-f41173ac1228}</UniqueIdentifier>
-      <Extensions>cpp</Extensions>
-    </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{04e50567-353c-4942-b6b7-8efa2e569853}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl</Extensions>
@@ -35,10 +31,6 @@
     </Filter>
     <Filter Include="Header Files\VM Common Header Files">
       <UniqueIdentifier>{9e1b1754-8fe5-4696-9761-da1c738fc904}</UniqueIdentifier>
-      <Extensions>h</Extensions>
-    </Filter>
-    <Filter Include="Header Files\VM Driver Header Files">
-      <UniqueIdentifier>{9471196c-0d55-4e28-b881-02ce8c54ee4a}</UniqueIdentifier>
       <Extensions>h</Extensions>
     </Filter>
     <Filter Include="Resource Files">
@@ -116,14 +108,14 @@
     <ClCompile Include="..\src\vm\z80.cpp">
       <Filter>Source Files\VM Common Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\vm\sc3000\keyboard.cpp">
-      <Filter>Source Files\VM Driver Source Files</Filter>
+    <ClCompile Include="..\src\vm\pecos\keyboard.cpp">
+      <Filter>Source Files\EMU Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\vm\sc3000\memory.cpp">
-      <Filter>Source Files\VM Driver Source Files</Filter>
+    <ClCompile Include="..\src\vm\pecos\memory.cpp">
+      <Filter>Source Files\EMU Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\vm\sc3000\sc3000.cpp">
-      <Filter>Source Files\VM Driver Source Files</Filter>
+    <ClCompile Include="..\src\vm\pecos\pecos.cpp">
+      <Filter>Source Files\EMU Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -190,17 +182,17 @@
     <ClInclude Include="..\src\vm\z80.h">
       <Filter>Header Files\VM Common Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\vm\sc3000\keyboard.h">
-      <Filter>Header Files\VM Driver Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\vm\sc3000\memory.h">
-      <Filter>Header Files\VM Driver Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\vm\sc3000\sc3000.h">
-      <Filter>Header Files\VM Driver Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\res\resource.h">
       <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\vm\pecos\keyboard.h">
+      <Filter>Header Files\EMU Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\vm\pecos\memory.h">
+      <Filter>Header Files\EMU Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\vm\pecos\pecos.h">
+      <Filter>Header Files\EMU Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -213,13 +205,13 @@
     <Image Include="..\src\res\indicator\access_on.bmp">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\src\res\sc3000.ico">
+    <Image Include="..\src\res\pecos.ico">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\src\res\sc3000.rc">
-      <Filter>Resource Files</Filter>
+    <ResourceCompile Include="..\src\res\pecos.rc">
+      <Filter>Source Files</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>

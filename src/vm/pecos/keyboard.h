@@ -19,7 +19,7 @@
 class KEYBOARD : public DEVICE
 {
 private:
-	DEVICE *d_cpu, *d_pio;
+	DEVICE *d_cpu;	//, *d_pio;
 	
 	const uint8_t* key_stat;
 	const uint32_t* joy_stat;
@@ -46,10 +46,12 @@ public:
 	{
 		d_cpu = device;
 	}
+#if 0
 	void set_context_pio(DEVICE* device)
 	{
 		d_pio = device;
 	}
+#endif
 };
 
 #endif
