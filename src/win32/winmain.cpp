@@ -201,6 +201,8 @@ void update_socket(int ch, WPARAM wParam, LPARAM lParam)
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
 
+#include "../vm/device.h"
+
 int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR szCmdLine, int iCmdShow)
 {
 	// get os version
@@ -284,6 +286,15 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR szCmdL
 	// initialize emulation core
 	emu = new EMU(hWnd, hInstance);
 	
+#ifdef USE_DEBUGGER
+	if (true == config.start_in_debugger)
+	{
+		emu->get_vm()->reset();
+
+		emu->open_debugger(0);
+	}
+#endif
+
 	// update window
 	SetWindowText(hWnd, emu->device_name());
 	emu->set_host_window_size(WINDOW_WIDTH, WINDOW_HEIGHT, true);
@@ -979,6 +990,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 					emu->set_host_window_size(-1, -1, !now_fullscreen);
 				#endif
 			}
+			break;
+		case ID_HOST_START_IN_DEBUGGER:
+			config.start_in_debugger = !config.start_in_debugger;
 			break;
 		case ID_SCREEN_WINDOW + 0: case ID_SCREEN_WINDOW + 1: case ID_SCREEN_WINDOW + 2: case ID_SCREEN_WINDOW + 3: case ID_SCREEN_WINDOW + 4:
 		case ID_SCREEN_WINDOW + 5: case ID_SCREEN_WINDOW + 6: case ID_SCREEN_WINDOW + 7: case ID_SCREEN_WINDOW + 8: case ID_SCREEN_WINDOW + 9:
@@ -2025,6 +2039,7 @@ void update_host_menu(HMENU hMenu)
 	EnableMenuItem(hMenu, ID_HOST_DISABLE_DWM, win8_or_later ? MF_ENABLED : MF_GRAYED);
 	
 	CheckMenuItem(hMenu, ID_HOST_SHOW_STATUS_BAR, config.show_status_bar ? MF_CHECKED : MF_UNCHECKED);
+	CheckMenuItem(hMenu, ID_HOST_START_IN_DEBUGGER, config.start_in_debugger ? MF_CHECKED : MF_UNCHECKED);
 }
 
 #ifndef ONE_BOARD_MICRO_COMPUTER

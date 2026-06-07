@@ -238,6 +238,7 @@ typedef struct {
 		bool use_dinput;
 		bool disable_dwm;
 		bool show_status_bar;
+		bool start_in_debugger;
 	#endif
 	
 	// qt

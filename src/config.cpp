@@ -151,6 +151,7 @@ void initialize_config()
 		#endif
 		config.use_dinput = true;
 		config.show_status_bar = true;
+		config.start_in_debugger = false;
 	#endif
 	
 	// qt
@@ -400,6 +401,7 @@ void load_config(const _TCHAR* config_path)
 		config.use_dinput = MyGetPrivateProfileBool(_T("Win32"), _T("UseDirectInput"), config.use_dinput, config_path);
 		config.disable_dwm = MyGetPrivateProfileBool(_T("Win32"), _T("DisableDwm"), config.disable_dwm, config_path);
 		config.show_status_bar = MyGetPrivateProfileBool(_T("Win32"), _T("ShowStatusBar"), config.show_status_bar, config_path);
+		config.start_in_debugger = MyGetPrivateProfileBool(_T("Win32"), _T("StartInDebugger"), config.start_in_debugger, config_path);
 	#endif
 	
 	// qt
@@ -630,6 +632,7 @@ void save_config(const _TCHAR* config_path)
 		MyWritePrivateProfileBool(_T("Win32"), _T("UseDirectInput"), config.use_dinput, config_path);
 		MyWritePrivateProfileBool(_T("Win32"), _T("DisableDwm"), config.disable_dwm, config_path);
 		MyWritePrivateProfileBool(_T("Win32"), _T("ShowStatusBar"), config.show_status_bar, config_path);
+		MyWritePrivateProfileBool(_T("Win32"), _T("StartInDebugger"), config.start_in_debugger, config_path);
 	#endif
 	
 	// qt

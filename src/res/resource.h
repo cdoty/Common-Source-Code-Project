@@ -670,13 +670,15 @@
 #define ID_OPEN_BLANK_40MB_HD8          45145
 #define ID_RECENT_HD8                   45146
 #define ID_HD8_MENU_END                 45153
+#define ID_HOST_STARTINDEBUGGER         45154
+#define ID_HOST_START_IN_DEBUGGER       45155
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        215
-#define _APS_NEXT_COMMAND_VALUE         45154
+#define _APS_NEXT_COMMAND_VALUE         45156
 #define _APS_NEXT_CONTROL_VALUE         1003
 #define _APS_NEXT_SYMED_VALUE           108
 #endif
