@@ -48,6 +48,7 @@ EMU::EMU()
 	initialize_debug_log();
 #endif
 	message_count = 0;
+	prick_128k = false;
 	
 #ifdef USE_FLOPPY_DISK
 	// initialize d88 file info
@@ -301,6 +302,8 @@ void EMU::reset()
 	serial_type = config.serial_type;
 #endif
 	if(reinitialize) {
+		prick_128k	= false;
+
 		// stop sound
 		osd->stop_sound();
 		// reinitialize virtual machine
@@ -1974,6 +1977,16 @@ void EMU::out_message(const _TCHAR* format, ...)
 void EMU::sleep(uint32_t ms)
 {
 	osd->sleep(ms);
+}
+
+bool EMU::isPrick()
+{
+	return	prick_128k;
+}
+
+void EMU::setIsPrick(bool isPrick)
+{
+	prick_128k	= isPrick;
 }
 
 // ----------------------------------------------------------------------------

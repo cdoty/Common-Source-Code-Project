@@ -21,7 +21,7 @@ class MEMORY : public DEVICE
 private:	
 	// memory
 	uint8_t module[0x10000 + MODULE_HEADER_SIZE];	// Module file
-	uint8_t ipl[0x1000];			// PECOS bios
+	uint8_t ipl[0x8000];			// PECOS bios
 	uint8_t ram[0x10000];
 	
 	uint8_t wdmy[0x1000];

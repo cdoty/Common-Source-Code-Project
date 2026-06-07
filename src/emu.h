@@ -91,6 +91,7 @@ class EMU
 protected:
 	VM_TEMPLATE* vm;
 	OSD* osd;
+	bool prick_128k;
 	
 private:
 	// debugger
@@ -421,7 +422,9 @@ public:
 	
 	// misc
 	void sleep(uint32_t ms);
-	
+	bool isPrick();
+	void setIsPrick(bool isPrick);
+
 	// user interface
 #ifdef USE_CART
 	void open_cart(int drv, const _TCHAR* file_path);

@@ -27,7 +27,7 @@
 
 void MEMORY::initialize()
 {
-	ram_selected	= false;
+	ram_selected = false;
 	module_byte_index	= 0;
 
 	memset(module, 0xff, sizeof(module));
@@ -37,11 +37,20 @@ void MEMORY::initialize()
 	
 	// load ipl
 	FILEIO* fio = new FILEIO();
-	if(fio->Fopen(create_local_path(_T("PECOS_BIOS111.rom")), FILEIO_READ_BINARY)) {
-//	if(fio->Fopen(create_local_path(_T("PECOS_V2.00_PRB0127.rom")), FILEIO_READ_BINARY)) {
-//	if(fio->Fopen(create_local_path(_T("PECOS_128A_V400.rom")), FILEIO_READ_BINARY)) {
-		fio->Fread(ipl, sizeof(ipl), 1);
+
+	if(fio->Fopen(create_local_path(_T("PECOS_128A_V400.rom")), FILEIO_READ_BINARY) || 
+	   fio->Fopen(create_local_path(_T("PECOS_V2.00_PRB0127.rom")), FILEIO_READ_BINARY) || 
+	   fio->Fopen(create_local_path(_T("PECOS_BIOS111.rom")), FILEIO_READ_BINARY))
+	{
+		long	fileLength	= fio->FileLength();
+
+		fio->Fread(ipl, fileLength, 1);
 		fio->Fclose();
+
+		if (0x8000 == fileLength)
+		{
+			emu->setIsPrick(true);
+		}
 	}
 	delete fio;
 	
@@ -106,11 +115,28 @@ void MEMORY::close_module()
 void MEMORY::update_bank()
 {
 	if(!inserted) {
-		SET_BANK(0x0000, 0x1fff, ram + 0x0000, ipl);
-		SET_BANK(0x2000, 0xffff, ram + 0x2000, ram + 0x2000);
+		if (true == emu->isPrick())
+		{
+			SET_BANK(0x0000, 0x7fff, ram + 0x0000, ipl);
+			SET_BANK(0x8000, 0xffff, ram + 0x8000, ram + 0x8000);
+		}
+
+		else
+		{
+			SET_BANK(0x0000, 0x1fff, ram + 0x0000, ipl);
+			SET_BANK(0x2000, 0xffff, ram + 0x2000, ram + 0x2000);
+		}
 	}
 	if(ram_selected) {
-		SET_BANK(0x0000, 0x1fff, ram, ram);
+		if (true == emu->isPrick())
+		{
+			SET_BANK(0x0000, 0x7fff, ram, ram);
+		}
+
+		else
+		{
+			SET_BANK(0x0000, 0x1fff, ram, ram);
+		}
 	}
 }
 
@@ -152,7 +178,6 @@ void MEMORY::write_io8w(uint32_t addr, uint32_t data, int* wait)
 		{
 			module_byte_index	= 0;
 		}
-
 	}
 }
 

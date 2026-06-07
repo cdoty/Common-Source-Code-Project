@@ -100,32 +100,38 @@ bool KEYBOARD::process_state(FILEIO* state_fio, bool loading)
 void KEYBOARD::write_io8w(uint32_t addr, uint32_t data, int* wait)
 {
 #ifdef MODULE_LOADER_MODE
-	column	= data;
+	if (false == emu->isPrick())
+	{
+		column	= data;
+	}
 #endif
 }
 
 uint32_t KEYBOARD::read_io8w(uint32_t addr, int* wait)
 {
 #ifdef MODULE_LOADER_MODE
-	// Keyboard reset
-	if (0xff == column)
+	if (false == emu->isPrick())
 	{
-		return	0x80;
-	}
+		// Keyboard reset
+		if (0xff == column)
+		{
+			return	0x80;
+		}
 
-	else if (0 == column)
-	{
-		return	0x00;
-	}
+		else if (0 == column)
+		{
+			return	0x00;
+		}
 
-	else if (1 == column)
-	{
-		return	0x00;
-	}
+		else if (1 == column)
+		{
+			return	0x00;
+		}
 
-	else if (4 == column)
-	{
-		return	0x80;
+		else if (4 == column)
+		{
+			return	0x80;
+		}
 	}
 #endif
 
