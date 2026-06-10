@@ -10,26 +10,22 @@
 #include "keyboard.h"
 #include "../i8255.h"
 
-#define	MODULE_LOADER_MODE
-
-static const uint8_t key_map[8][12] = {
-	{ 0x31, 0x51, 0x41, 0x5a, 0x15, 0xbc, 0x4b, 0x49, 0x38, 0x00, 0x00, 0x00 },
-	{ 0x32, 0x57, 0x53, 0x58, 0x20, 0xbe, 0x4c, 0x4f, 0x39, 0x00, 0x00, 0x00 },
-	{ 0x33, 0x45, 0x44, 0x43, 0x24, 0xbf, 0xbb, 0x50, 0x30, 0x00, 0x00, 0x00 },
-	{ 0x34, 0x52, 0x46, 0x56, 0x2e, 0xe2, 0xba, 0xc0, 0xbd, 0x00, 0x00, 0x00 },
-	{ 0x35, 0x54, 0x47, 0x42, 0x00, 0x28, 0xdd, 0xdb, 0xde, 0x00, 0x00, 0x00 },
-	{ 0x36, 0x59, 0x48, 0x4e, 0x00, 0x25, 0x0d, 0x00, 0xdc, 0x00, 0x00, 0x29 },
-	{ 0x37, 0x55, 0x4a, 0x4d, 0x00, 0x27, 0x26, 0x00, 0x13, 0x12, 0x11, 0x10 },
-	{ 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x81, 0x82, 0x84, 0x88, 0x90, 0xa0 }
+// Table taken from 0xfb73 in memory.
+static const uint8_t key_map[8][8] =
+{
+	{ 0x51, 0x45, 0x57, 0x52, 0x55, 0x54, 0x49, 0x59 },
+	{ 0x00, 0x00, 0x00, 0x00, 0x7C, 0x20, 0x0D, 0x00 },
+	{ 0x09, 0x31, 0x1B, 0x32, 0x35, 0x33, 0x36, 0x34 },
+	{ 0x41, 0x44, 0x53, 0x46, 0x00, 0x47, 0x4A, 0x48 },
+	{ 0x16, 0x1E, 0x0B, 0x5A, 0x56, 0x58, 0x42, 0x43 },
+	{ 0x4E, 0x2C, 0x4D, 0x2E, 0x08, 0x2F, 0x0C, 0x5C },
+	{ 0x37, 0x39, 0x38, 0x30, 0x08, 0x2D, 0x40, 0x5E },
+	{ 0x4B, 0x3B, 0x4C, 0x3A, 0x5B, 0x4F, 0x5D, 0x50 }
 };
 
 void KEYBOARD::initialize()
 {
 	key_stat = emu->get_key_buffer();
-	joy_stat = emu->get_joy_buffer();
-	
-	column = 0;
-	break_pressed = false;
 	
 	// register event to update the key status
 	register_frame_event(this);
@@ -37,49 +33,23 @@ void KEYBOARD::initialize()
 
 void KEYBOARD::event_frame()
 {
-	bool new_pressed = (key_stat[0x13] != 0);
-	if(new_pressed && !break_pressed) {
-		d_cpu->write_signal(SIG_CPU_NMI, 1, 1);
-	}
-	break_pressed = new_pressed;
-	
-	update_keyboard();
 }
 
-void KEYBOARD::write_signal(int id, uint32_t data, uint32_t mask)
-{
-	if(column != (data & mask)) {
-		column = data & mask;
-		update_keyboard();
-	}
-}
-
-void KEYBOARD::update_keyboard()
+uint32_t KEYBOARD::get_row(int row)
 {
 	uint32_t data = 0;
 	
-	if(column < 7) {
+	if(row >= 0 && row < 8)
+	{
 		// keyboard
-		for(int i = 0; i < 12; i++) {
-			if(key_stat[key_map[column][i]]) {
-				data |= (1 << i);
-			}
-		}
-	} else {
-		// joystick
-		for(int i = 0; i < 12; i++) {
-			uint8_t map = key_map[7][i];
-			uint8_t stat = (map & 0x80) ? joy_stat[1] : joy_stat[0];
-			if(stat & (map & 0x3f)) {
-				data |= (1 << i);
+		for(int column = 0; column < 8; column++) {
+			if(key_stat[key_map[column][row]]) {
+				data |= (1 << column);
 			}
 		}
 	}
-#if 0
-	d_pio->write_signal(SIG_I8255_PORT_A, ~data, 0xff);
-	data >>= 8;
-	d_pio->write_signal(SIG_I8255_PORT_B, ~data, 0x0f);
-#endif
+
+	return	(~data);
 }
 
 #define STATE_VERSION	1
@@ -92,48 +62,13 @@ bool KEYBOARD::process_state(FILEIO* state_fio, bool loading)
 	if(!state_fio->StateCheckInt32(this_device_id)) {
 		return false;
 	}
-	state_fio->StateValue(column);
-	state_fio->StateValue(break_pressed);
 	return true;
-}
-
-void KEYBOARD::write_io8w(uint32_t addr, uint32_t data, int* wait)
-{
-#ifdef MODULE_LOADER_MODE
-	if (false == emu->isPrick())
-	{
-		column	= data;
-	}
-#endif
 }
 
 uint32_t KEYBOARD::read_io8w(uint32_t addr, int* wait)
 {
-#ifdef MODULE_LOADER_MODE
-	if (false == emu->isPrick())
-	{
-		// Keyboard reset
-		if (0xff == column)
-		{
-			return	0x80;
-		}
+	uint32_t	row		= (addr & 0xFF00) >> 8;
+	uint32_t	data	= (get_row(row)) & 0xFF;
 
-		else if (0 == column)
-		{
-			return	0x00;
-		}
-
-		else if (1 == column)
-		{
-			return	0x00;
-		}
-
-		else if (4 == column)
-		{
-			return	0x80;
-		}
-	}
-#endif
-
-	return	0xFF;
+	return	data;
 }

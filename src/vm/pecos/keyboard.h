@@ -22,11 +22,8 @@ private:
 	DEVICE *d_cpu;	//, *d_pio;
 	
 	const uint8_t* key_stat;
-	const uint32_t* joy_stat;
-	uint8_t column;
-	bool break_pressed;
 	
-	void update_keyboard();
+	uint32_t get_row(int row);
 	
 public:
 	KEYBOARD(VM_TEMPLATE* parent_vm, EMU* parent_emu) : DEVICE(parent_vm, parent_emu)
@@ -38,7 +35,6 @@ public:
 	// common functions
 	void initialize();
 	void event_frame();
-	void write_signal(int id, uint32_t data, uint32_t mask);
 	bool process_state(FILEIO* state_fio, bool loading);
 	
 	// unique functions
@@ -46,14 +42,7 @@ public:
 	{
 		d_cpu = device;
 	}
-#if 0
-	void set_context_pio(DEVICE* device)
-	{
-		d_pio = device;
-	}
-#endif
 
-	void write_io8w(uint32_t addr, uint32_t data, int* wait) override;
 	uint32_t read_io8w(uint32_t addr, int* wait) override;
 };
 

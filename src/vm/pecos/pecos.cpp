@@ -101,8 +101,7 @@ VM::VM(EMU* parent_emu) : VM_TEMPLATE(parent_emu)
 #endif
 	
 	// i/o bus
-	io->set_iomap_single_w(0x30, key);			// Port 0x30 keyboard select
-	io->set_iomap_single_r(0x50, key);			// Port 0x50 keyboard read
+	io->set_iomap_single_r(0x10, key);			// Port 0x10 keyboard read.
 	io->set_iomap_single_w(0x40, memory);		// Port 0x40 selects between RAM and BIOS
 	io->set_iomap_single_rw(0x80, memory);		// Port 0x80 selects module(?)
 	io->set_iomap_range_rw(0x70, 0x71, vdp);
