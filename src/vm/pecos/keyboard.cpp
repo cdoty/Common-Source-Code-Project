@@ -46,6 +46,52 @@ uint32_t KEYBOARD::get_row(int row)
 			if(key_stat[key_map[column][row]]) {
 				data |= (1 << column);
 			}
+
+			// Handle key modifiers
+			if (1 == column)
+			{
+				// The rows are processed in the order listed.
+				if (3 == row && key_stat[VK_SHIFT])
+				{
+					data	|= 1 << column;
+				}
+
+				// Simulate caps lock with scroll lock
+				else if (4 == row && key_stat[VK_SCROLL])
+				{
+					data	|= 1 << column;
+				}
+
+				else if (1 == row && (key_stat[VK_RCONTROL] || key_stat[VK_LCONTROL]))
+				{
+					data	|= 1 << column;
+				}
+
+				// Unsure of the use of rows 0, 2, or 7. They are not handled in the ROM and not handled in the character table at 0xFB73.
+				else if (0 == row && key_stat[VK_F1])
+				{
+					data	|= 1 << column;
+				}
+
+				else if (2 == row && key_stat[VK_F2])
+				{
+					data	|= 1 << column;
+				}
+
+				else if (7 == row && key_stat[VK_F3])
+				{
+					data	|= 1 << column;
+				}
+			}
+
+			else if (3 == column)
+			{
+				// Unsure of the use of row 4.  They are not handled in the ROM and not handled in the character table at 0xFB73.
+				if (4 == row && key_stat[VK_F4])
+				{
+					data	|= 1 << column;
+				}
+			}
 		}
 	}
 
