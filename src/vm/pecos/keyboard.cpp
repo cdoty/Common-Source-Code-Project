@@ -80,7 +80,7 @@ uint32_t KEYBOARD::get_row(int row)
 					data	|= 1 << column;
 				}
 
-				else if (1 == row && (key_stat[VK_RCONTROL] || key_stat[VK_LCONTROL]))
+				else if (1 == row && (key_stat[VK_CONTROL]))
 				{
 					data	|= 1 << column;
 				}
