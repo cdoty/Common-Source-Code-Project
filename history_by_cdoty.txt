@@ -1,5 +1,9 @@
-6/10/2016
+6/11/2026
+[PECOS] Fixed missing keys, set up some remapping of keys.
+
+6/10/2026
 [PECOS] Got the keyboard working in all three ROMS. ROM Basic and module loading works fine.
+
 6/5/2026
 [PECOS] Added preliminary PECOS support based on SC-3000 driver.
 [TVBoy] Merged TVBoy support for Inufuto's cartridge (thanks Mr.tanam)
