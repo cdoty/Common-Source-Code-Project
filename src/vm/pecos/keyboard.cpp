@@ -10,6 +10,12 @@
 #include "keyboard.h"
 #include "../i8255.h"
 
+// Matching layout replaces the backslash and pipe with grave accent and @, matching the layout of the original key. The missing backslash key is moved to the tilde key.
+//#define MATCHING_LAYOUT
+
+// In matching mode, remap right shift key to backslash.
+//#define	REMAP_RSHIFT
+
 // Table taken from 0xfb73 in memory.
 static const uint8_t key_map[8][8] =
 {
@@ -18,9 +24,14 @@ static const uint8_t key_map[8][8] =
 	{ 0x09, 0x31, 0x1B, 0x32, 0x35, 0x33, 0x36, 0x34 },
 	{ 0x41, 0x44, 0x53, 0x46, 0x00, 0x47, 0x4A, 0x48 },
 	{ 0x16, 0x1E, 0x0B, 0x5A, 0x56, 0x58, 0x42, 0x43 },
-	{ 0x4E, 0x2C, 0x4D, 0x2E, 0x08, 0x2F, 0x0C, 0x5C },
-	{ 0x37, 0x39, 0x38, 0x30, 0x08, 0x2D, 0x40, 0x5E },
-	{ 0x4B, 0x3B, 0x4C, 0x3A, 0x5B, 0x4F, 0x5D, 0x50 }
+#ifdef MATCHING_LAYOUT
+	{ 0x4E, 0xBC, 0x4D, 0xBE, 0x08, 0xBF, 0x0C, 0xDC },	// Row 7 is backslash (5C).
+	{ 0x37, 0x39, 0x38, 0x30, 0x08, 0xBD, 0x00, 0xDE },	// Row 6 is @ (40). Code needs to handle different keys for backslash.
+#else
+	{ 0x4E, 0xBC, 0x4D, 0xBE, 0x08, 0xBF, 0x0C, 0x00 },	// Row 7 is backslash (5C). Code needs to handle different keys for backslash.
+	{ 0x37, 0x39, 0x38, 0x30, 0x08, 0xBD, 0xDC, 0xDE },	// Row 6 is @ (40).
+#endif
+	{ 0x4B, 0xBB, 0x4C, 0xBA, 0xDB, 0x4F, 0xDD, 0x50 }
 };
 
 void KEYBOARD::initialize()
@@ -50,12 +61,19 @@ uint32_t KEYBOARD::get_row(int row)
 			// Handle key modifiers
 			if (1 == column)
 			{
+#if defined MATCHING_LAYOUT && defined REMAP_RSHIFT
+				// The rows are processed in the order listed.
+				if (3 == row && key_stat[VK_LSHIFT])
+				{
+					data	|= 1 << column;
+				}
+#else
 				// The rows are processed in the order listed.
 				if (3 == row && key_stat[VK_SHIFT])
 				{
 					data	|= 1 << column;
 				}
-
+#endif
 				// Simulate caps lock with scroll lock
 				else if (4 == row && key_stat[VK_SCROLL])
 				{
@@ -92,6 +110,37 @@ uint32_t KEYBOARD::get_row(int row)
 					data	|= 1 << column;
 				}
 			}
+
+#ifdef MATCHING_LAYOUT
+			else if (5 == column)
+			{
+#ifdef REMAP_RSHIFT
+				// Treat right shift as backslash
+				if (7 == row && key_stat[VK_RSHIFT])
+				{
+					data	|= 1 << column;
+				}
+#endif
+			}
+
+			else if (6 == column)
+			{
+				// Treat both backslash keys as @ `
+				if (6 == row && (key_stat[VK_OEM_5] || key_stat[VK_OEM_102]))
+				{
+					data	|= 1 << column;
+				}
+			}
+#else
+			else if (5 == column)
+			{
+				// Treat both backslash keys as backslash
+				if (7 == row && (key_stat[VK_OEM_5] || key_stat[VK_OEM_102]))
+				{
+					data	|= 1 << column;
+				}
+			}
+#endif
 		}
 	}
 

@@ -105,7 +105,7 @@ VM::VM(EMU* parent_emu) : VM_TEMPLATE(parent_emu)
 	io->set_iomap_single_w(0x40, memory);		// Port 0x40 selects between RAM and BIOS
 	io->set_iomap_single_rw(0x80, memory);		// Port 0x80 selects module(?)
 	io->set_iomap_range_rw(0x70, 0x71, vdp);
-	io->set_iomap_range_rw(0x9d, 0x9e, psg);
+//	io->set_iomap_range_rw(0x9d, 0x9e, psg);
 //	io->set_iomap_range_rw(0xc0, 0xdf, pio_k);
 //	io->set_iomap_range_rw(0xe0, 0xe3, fdc);
 //	io->set_iomap_range_rw(0xe4, 0xe7, pio_f);
