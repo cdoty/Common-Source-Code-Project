@@ -24,7 +24,7 @@
 #define MAX_DRIVE		4
 
 // device informations for win32
-#define USE_CART		1
+#define USE_CART		2
 #define USE_FLOPPY_DISK		1
 #define USE_TAPE		1
 #define USE_AUTO_KEY		5

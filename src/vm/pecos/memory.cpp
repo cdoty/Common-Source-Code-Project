@@ -28,9 +28,14 @@
 void MEMORY::initialize()
 {
 	ram_selected = false;
-	module_byte_index	= 0;
+	
+	for (int iLoop = 0; iLoop < 2; ++iLoop)
+	{
+		module_byte_index[iLoop]	= 0;
 
-	memset(module, 0xff, sizeof(module));
+		memset(module[iLoop], 0xff, sizeof(module[iLoop]));
+	}
+
 	memset(ipl, 0xff, sizeof(ipl));
 	memset(ram, 0, sizeof(ram));
 	memset(rdmy, 0xff, sizeof(rdmy));
@@ -54,8 +59,11 @@ void MEMORY::initialize()
 	}
 	delete fio;
 	
-	// set memory map
-	close_module();
+	// Close modules
+	for (int iLoop = 0; iLoop < 2; ++iLoop)
+	{
+		close_module(iLoop);
+	}
 }
 
 void MEMORY::write_data8(uint32_t addr, uint32_t data)
@@ -76,13 +84,13 @@ uint32_t MEMORY::read_data8(uint32_t addr)
 	return rbank[addr >> 12][addr & 0xfff];
 }
 
-void MEMORY::open_module(const _TCHAR* file_path)
+void MEMORY::open_module(const _TCHAR* file_path, int moduleID)
 {
 	FILEIO* fio = new FILEIO();
 	
 	if(fio->Fopen(file_path, FILEIO_READ_BINARY)) {
-		memset(module, 0xff, sizeof(module));
-		fio->Fread(module, sizeof(module), 1);
+		memset(module[moduleID], 0xff, sizeof(module[moduleID]));
+		fio->Fread(module[moduleID], sizeof(module[moduleID]), 1);
 		if(fio->Ftell() > 0x8000 + MODULE_HEADER_SIZE) {
 			// ホーム麻雀(32KB+16KB) or ロレッタの肖像(128KB)
 			bank[0] = 0;
@@ -92,7 +100,7 @@ void MEMORY::open_module(const _TCHAR* file_path)
 			bank[0] = bank[1] = bank[2] = 0xff;
 		}
 		fio->Fclose();
-		inserted = true;
+		inserted[moduleID] = true;
 		
 		// set memory map
 		update_bank();
@@ -102,10 +110,11 @@ void MEMORY::open_module(const _TCHAR* file_path)
 	emu->reset();
 }
 
-void MEMORY::close_module()
+void MEMORY::close_module(int moduleID)
 {
-	memset(module, 0xff, sizeof(module));
-	inserted = false;
+	memset(module[moduleID], 0xff, sizeof(module[moduleID]));
+	inserted[moduleID] = false;
+
 	bank[0] = bank[1] = bank[2] = 0xff;
 	
 	// set memory map
@@ -114,7 +123,8 @@ void MEMORY::close_module()
 
 void MEMORY::update_bank()
 {
-	if(!inserted) {
+	if (!inserted[0] && !inserted[1])
+	{
 		if (true == emu->isPrick())
 		{
 			SET_BANK(0x0000, 0x7fff, ram + 0x0000, ipl);
@@ -127,7 +137,8 @@ void MEMORY::update_bank()
 			SET_BANK(0x2000, 0xffff, ram + 0x2000, ram + 0x2000);
 		}
 	}
-	if(ram_selected) {
+	if(ram_selected)
+	{
 		if (true == emu->isPrick())
 		{
 			SET_BANK(0x0000, 0x7fff, ram, ram);
@@ -151,7 +162,8 @@ bool MEMORY::process_state(FILEIO* state_fio, bool loading)
 		return false;
 	}
 	state_fio->StateArray(ram, sizeof(ram), 1);
-	state_fio->StateValue(inserted);
+	state_fio->StateValue(inserted[0]);
+	state_fio->StateValue(inserted[1]);
 	state_fio->StateValue(ram_selected);
 	state_fio->StateArray(bank, sizeof(bank), 1);
 	
@@ -174,23 +186,45 @@ void MEMORY::write_io8w(uint32_t addr, uint32_t data, int* wait)
 	else if (0x80 == (addr & 0xFF))
 	{
 		// Start module loader
-		if (true == inserted)
+		if (true == inserted[0])
 		{
-			module_byte_index	= 0;
+			module_byte_index[0]	= 0;
+		}
+	}
+
+	else if (0xC0 == (addr & 0xFF))
+	{
+		// Start module loader
+		if (true == inserted[1])
+		{
+			module_byte_index[1]	= 0;
 		}
 	}
 }
 
 uint32_t MEMORY::read_io8w(uint32_t addr, int* wait)
 {
-	if (0x80 == (addr & 0xFF) && true == inserted)
+	if (0x80 == (addr & 0xFF) && true == inserted[0])
 	{
 		// Load module byte
-		if (module_byte_index < sizeof(module))
+		if (module_byte_index[0] < sizeof(module))
 		{
-			uint32_t	value	= module[module_byte_index];
+			uint32_t	value	= module[0][module_byte_index[0]];
 			
-			module_byte_index++;
+			module_byte_index[0]++;
+
+			return	value;
+		}
+	}
+
+	else if (0xC0 == (addr & 0xFF) && true == inserted[1])
+	{
+		// Load module byte
+		if (module_byte_index[1] < sizeof(module))
+		{
+			uint32_t	value	= module[1][module_byte_index[1]];
+			
+			module_byte_index[1]++;
 
 			return	value;
 		}

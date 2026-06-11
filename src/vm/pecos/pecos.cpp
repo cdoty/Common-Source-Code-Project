@@ -103,7 +103,8 @@ VM::VM(EMU* parent_emu) : VM_TEMPLATE(parent_emu)
 	// i/o bus
 	io->set_iomap_single_r(0x10, key);			// Port 0x10 keyboard read.
 	io->set_iomap_single_w(0x40, memory);		// Port 0x40 selects between RAM and BIOS
-	io->set_iomap_single_rw(0x80, memory);		// Port 0x80 selects module(?)
+	io->set_iomap_single_rw(0x80, memory);		// Port 0x80 module 1 loading
+	io->set_iomap_single_rw(0xC0, memory);		// Port 0xC0 module 2 loading
 	io->set_iomap_range_rw(0x70, 0x71, vdp);
 //	io->set_iomap_range_rw(0x9d, 0x9e, psg);
 //	io->set_iomap_range_rw(0xc0, 0xdf, pio_k);
@@ -229,16 +230,16 @@ void VM::set_sound_device_volume(int ch, int decibel_l, int decibel_r)
 
 void VM::open_cart(int drv, const _TCHAR* file_path)
 {
-	if(drv == 0) {
-		memory->open_module(file_path);
+	if(drv < USE_CART) {
+		memory->open_module(file_path, drv);
 		reset();
 	}
 }
 
 void VM::close_cart(int drv)
 {
-	if(drv == 0) {
-		memory->close_module();
+	if(drv < USE_CART) {
+		memory->close_module(drv);
 		reset();
 	}
 }

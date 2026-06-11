@@ -20,7 +20,7 @@ class MEMORY : public DEVICE
 {
 private:	
 	// memory
-	uint8_t module[0x10000 + MODULE_HEADER_SIZE];	// Module file
+	uint8_t module[2][0x10000 + MODULE_HEADER_SIZE];	// Module file
 	uint8_t ipl[0x8000];			// PECOS bios
 	uint8_t ram[0x10000];
 	
@@ -29,9 +29,9 @@ private:
 	uint8_t* wbank[16];
 	uint8_t* rbank[16];
 	
-	bool inserted;
+	bool inserted[2];
 	bool ram_selected;
-	int module_byte_index;
+	int module_byte_index[2];
 	uint8_t bank[3];
 	
 	void update_bank();
@@ -50,8 +50,8 @@ public:
 	bool process_state(FILEIO* state_fio, bool loading);
 	
 	// unique functions
-	void open_module(const _TCHAR* file_path);
-	void close_module();
+	void open_module(const _TCHAR* file_path, int moduleID);
+	void close_module(int moduleID);
 	bool is_module_inserted()
 	{
 		return inserted;
