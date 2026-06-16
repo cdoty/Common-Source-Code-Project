@@ -37,13 +37,6 @@ static const uint8_t key_map[8][8] =
 void KEYBOARD::initialize()
 {
 	key_stat = emu->get_key_buffer();
-	
-	// register event to update the key status
-	register_frame_event(this);
-}
-
-void KEYBOARD::event_frame()
-{
 }
 
 uint32_t KEYBOARD::get_row(int row)

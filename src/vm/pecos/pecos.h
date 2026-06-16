@@ -60,6 +60,7 @@ class Z80;
 
 class KEYBOARD;
 class MEMORY;
+class FLOPPY;
 
 class VM : public VM_TEMPLATE
 {
@@ -81,6 +82,7 @@ protected:
 	
 	KEYBOARD* key;
 	MEMORY* memory;
+	FLOPPY*	floppy;
 	
 public:
 	// ----------------------------------------

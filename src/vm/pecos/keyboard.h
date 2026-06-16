@@ -34,7 +34,6 @@ public:
 	
 	// common functions
 	void initialize();
-	void event_frame();
 	bool process_state(FILEIO* state_fio, bool loading);
 	
 	// unique functions

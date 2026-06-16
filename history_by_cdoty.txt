@@ -1,3 +1,6 @@
+6/16/2026
+[PECOS] Added sector reading from a 360k 3/5" disk image. The allows the boot sector to be loaded by the BIOS.a29e
+
 6/14/2026
 [PECOS] Fixed Test.bin crash.
 

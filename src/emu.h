@@ -21,6 +21,8 @@
 //	#define _DMA_DEBUG_LOG
 	// output i/o debug log
 //	#define _IO_DEBUG_LOG
+	// output floppy debug log
+//	#define _FLOPPY_DEBUG_LOG
 #endif
 
 #include <stdio.h>

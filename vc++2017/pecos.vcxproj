@@ -330,10 +330,9 @@
     <ClCompile Include="..\src\vm\datarec.cpp" />
     <ClCompile Include="..\src\vm\disk.cpp" />
     <ClCompile Include="..\src\vm\event.cpp" />
-    <ClCompile Include="..\src\vm\i8251.cpp" />
-    <ClCompile Include="..\src\vm\i8255.cpp" />
     <ClCompile Include="..\src\vm\io.cpp" />
     <ClCompile Include="..\src\vm\noise.cpp" />
+    <ClCompile Include="..\src\vm\pecos\floppy.cpp" />
     <ClCompile Include="..\src\vm\pecos\keyboard.cpp" />
     <ClCompile Include="..\src\vm\pecos\memory.cpp" />
     <ClCompile Include="..\src\vm\pecos\pecos.cpp" />
@@ -360,10 +359,9 @@
     <ClInclude Include="..\src\vm\device.h" />
     <ClInclude Include="..\src\vm\disk.h" />
     <ClInclude Include="..\src\vm\event.h" />
-    <ClInclude Include="..\src\vm\i8251.h" />
-    <ClInclude Include="..\src\vm\i8255.h" />
     <ClInclude Include="..\src\vm\io.h" />
     <ClInclude Include="..\src\vm\noise.h" />
+    <ClInclude Include="..\src\vm\pecos\floppy.h" />
     <ClInclude Include="..\src\vm\pecos\keyboard.h" />
     <ClInclude Include="..\src\vm\pecos\memory.h" />
     <ClInclude Include="..\src\vm\pecos\pecos.h" />

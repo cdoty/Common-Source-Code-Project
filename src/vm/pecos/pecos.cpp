@@ -27,6 +27,7 @@
 #include "../debugger.h"
 #endif
 
+#include "floppy.h"
 #include "keyboard.h"
 #include "memory.h"
 
@@ -63,6 +64,7 @@ VM::VM(EMU* parent_emu) : VM_TEMPLATE(parent_emu)
 //	fdc->set_context_noise_head_up(new NOISE(this, emu));
 	cpu = new Z80(this, emu);
 	
+	floppy = new FLOPPY(this, emu);
 	key = new KEYBOARD(this, emu);
 	memory = new MEMORY(this, emu);
 	
@@ -86,6 +88,8 @@ VM::VM(EMU* parent_emu) : VM_TEMPLATE(parent_emu)
 //	pio_f->set_context_port_c(fdc, SIG_UPD765A_RESET, 8, 0);
 	
 	vdp->set_context_irq(cpu, SIG_CPU_IRQ, 1);
+	floppy->set_context_irq(cpu, SIG_CPU_IRQ, 1);
+	floppy->set_context_nmi(cpu, SIG_CPU_NMI, 1);
 //	fdc->set_context_irq(pio_f, SIG_I8255_PORT_A, 1);
 //	fdc->set_context_index(pio_f, SIG_I8255_PORT_A, 4);
 	
@@ -106,6 +110,7 @@ VM::VM(EMU* parent_emu) : VM_TEMPLATE(parent_emu)
 	io->set_iomap_single_rw(0x80, memory);		// Port 0x80 module 1 loading
 	io->set_iomap_single_rw(0xC0, memory);		// Port 0xC0 module 2 loading
 	io->set_iomap_range_rw(0x70, 0x71, vdp);
+	io->set_iomap_range_rw(0xd0, 0xd4, floppy);
 //	io->set_iomap_range_rw(0x9d, 0x9e, psg);
 //	io->set_iomap_range_rw(0xc0, 0xdf, pio_k);
 //	io->set_iomap_range_rw(0xe0, 0xe3, fdc);

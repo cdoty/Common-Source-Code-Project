@@ -84,12 +84,6 @@
     <ClCompile Include="..\src\vm\event.cpp">
       <Filter>Source Files\VM Common Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\vm\i8251.cpp">
-      <Filter>Source Files\VM Common Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\vm\i8255.cpp">
-      <Filter>Source Files\VM Common Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\vm\io.cpp">
       <Filter>Source Files\VM Common Source Files</Filter>
     </ClCompile>
@@ -115,6 +109,9 @@
       <Filter>Source Files\EMU Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\vm\pecos\pecos.cpp">
+      <Filter>Source Files\EMU Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\vm\pecos\floppy.cpp">
       <Filter>Source Files\EMU Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -152,12 +149,6 @@
     <ClInclude Include="..\src\vm\event.h">
       <Filter>Header Files\VM Common Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\vm\i8251.h">
-      <Filter>Header Files\VM Common Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\vm\i8255.h">
-      <Filter>Header Files\VM Common Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\vm\io.h">
       <Filter>Header Files\VM Common Header Files</Filter>
     </ClInclude>
@@ -192,6 +183,9 @@
       <Filter>Header Files\EMU Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\vm\pecos\pecos.h">
+      <Filter>Header Files\EMU Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\vm\pecos\floppy.h">
       <Filter>Header Files\EMU Header Files</Filter>
     </ClInclude>
   </ItemGroup>

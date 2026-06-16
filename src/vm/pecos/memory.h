@@ -47,6 +47,7 @@ public:
 	void initialize();
 	void write_data8(uint32_t addr, uint32_t data);
 	uint32_t read_data8(uint32_t addr);
+	void write_signal(int id, uint32_t data, uint32_t mask);
 	bool process_state(FILEIO* state_fio, bool loading);
 	
 	// unique functions
@@ -56,6 +57,8 @@ public:
 	{
 		return inserted;
 	}
+
+	uint8_t* get_ram() {return ram;}
 
 	void write_io8w(uint32_t addr, uint32_t data, int* wait) override;
 	uint32_t read_io8w(uint32_t addr, int* wait) override;

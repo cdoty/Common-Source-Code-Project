@@ -84,6 +84,10 @@ uint32_t MEMORY::read_data8(uint32_t addr)
 	return rbank[addr >> 12][addr & 0xfff];
 }
 
+void MEMORY::write_signal(int id, uint32_t data, uint32_t mask)
+{
+}
+
 void MEMORY::open_module(const _TCHAR* file_path, int moduleID)
 {
 	FILEIO* fio = new FILEIO();
