@@ -23,12 +23,12 @@ static const uint8_t key_map[8][8] =
 	{ 0x00, 0x00, 0x00, 0x00, 0x7C, 0x20, 0x0D, 0x00 },
 	{ 0x09, 0x31, 0x1B, 0x32, 0x35, 0x33, 0x36, 0x34 },
 	{ 0x41, 0x44, 0x53, 0x46, 0x00, 0x47, 0x4A, 0x48 },
-	{ 0x16, 0x1E, 0x0B, 0x5A, 0x56, 0x58, 0x42, 0x43 },
+	{ 0x00, 0x1E, 0x00, 0x5A, 0x56, 0x58, 0x42, 0x43 },	// Row 0 is down arrow (16), row 2 is up arrow (0B).
 #ifdef MATCHING_LAYOUT
-	{ 0x4E, 0xBC, 0x4D, 0xBE, 0x08, 0xBF, 0x0C, 0xDC },	// Row 7 is backslash (5C).
+	{ 0x4E, 0xBC, 0x4D, 0xBE, 0x00, 0xBF, 0x00, 0xDC },	// Row 4 is left arrow (08), row 6 is right arrow (0C), row 7 is backslash (5C).
 	{ 0x37, 0x39, 0x38, 0x30, 0x08, 0xBD, 0x00, 0xDE },	// Row 6 is @ (40). Code needs to handle different keys for backslash.
 #else
-	{ 0x4E, 0xBC, 0x4D, 0xBE, 0x08, 0xBF, 0x0C, 0x00 },	// Row 7 is backslash (5C). Code needs to handle different keys for backslash.
+	{ 0x4E, 0xBC, 0x4D, 0xBE, 0x00, 0xBF, 0x00, 0x00 },	// Row 4 is left arrow (08), row 6 is right arrow (0C), row 7 is backslash (5C). Code needs to handle different keys for backslash.
 	{ 0x37, 0x39, 0x38, 0x30, 0x08, 0xBD, 0xDC, 0xDE },	// Row 6 is @ (40).
 #endif
 	{ 0x4B, 0xBB, 0x4C, 0xBA, 0xDB, 0x4F, 0xDD, 0x50 }
@@ -78,6 +78,7 @@ uint32_t KEYBOARD::get_row(int row)
 					data	|= 1 << column;
 				}
 
+#if 0
 				// Unsure of the use of rows 0, 2, or 7. They are not handled in the ROM and not handled in the character table at 0xFB73.
 				else if (0 == row && key_stat[VK_F1])
 				{
@@ -93,8 +94,10 @@ uint32_t KEYBOARD::get_row(int row)
 				{
 					data	|= 1 << column;
 				}
+#endif
 			}
 
+#if 0
 			else if (3 == column)
 			{
 				// Unsure of the use of row 4.  They are not handled in the ROM and not handled in the character table at 0xFB73.
@@ -103,6 +106,7 @@ uint32_t KEYBOARD::get_row(int row)
 					data	|= 1 << column;
 				}
 			}
+#endif
 
 #ifdef MATCHING_LAYOUT
 			else if (5 == column)
@@ -125,10 +129,33 @@ uint32_t KEYBOARD::get_row(int row)
 				}
 			}
 #else
+			else if (4 == column)
+			{
+				if (0 == row && key_stat[VK_DOWN])
+				{
+					data	|= 1 << column;
+				}
+
+				else if (2 == row && key_stat[VK_UP])
+				{
+					data	|= 1 << column;
+				}
+			}
+
 			else if (5 == column)
 			{
+				if (4 == row && key_stat[VK_LEFT])
+				{
+					data	|= 1 << column;
+				}
+
+				else if (6 == row && key_stat[VK_RIGHT])
+				{
+					data	|= 1 << column;
+				}
+
 				// Treat both backslash keys as backslash
-				if (7 == row && (key_stat[VK_OEM_5] || key_stat[VK_OEM_102]))
+				else if (7 == row && (key_stat[VK_OEM_5] || key_stat[VK_OEM_102]))
 				{
 					data	|= 1 << column;
 				}
