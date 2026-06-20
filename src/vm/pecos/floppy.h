@@ -31,6 +31,7 @@ private:
 	uint8_t	dataRegister;
 	bool	stepIn;
 	bool	readingSectors;
+	bool	seekNextSector;
 	bool	floppyLoaded;
 	bool	motorRunning;
 

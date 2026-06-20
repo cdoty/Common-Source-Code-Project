@@ -18,6 +18,7 @@ void FLOPPY::initialize()
 	dataRegister	= 0;
 	stepIn			= false;
 	readingSectors	= false;
+	seekNextSector	= false;
 	floppyLoaded	= false;
 	motorRunning	= false;
 
@@ -206,6 +207,8 @@ void FLOPPY::executeCommand(uint32_t data)
 #ifdef _FLOPPY_DEBUG_LOG
 			sprintf(szCommand, "Read sector %d\n", sectorRegister);
 #endif
+			seekNextSector	= (data & 0x10) != 0;
+
 			if (true == floppyLoaded)
 			{
 				readCount		= DISK_SECTOR_SIZE;
@@ -228,6 +231,8 @@ void FLOPPY::executeCommand(uint32_t data)
 #ifdef _FLOPPY_DEBUG_LOG
 			sprintf(szCommand, "Write sector %d\n", sectorRegister);
 #endif
+			seekNextSector	= (data & 0x10) != 0;
+
 			break;
 
 		case 6:
@@ -297,6 +302,11 @@ void FLOPPY::write_io8w(uint32_t addr, uint32_t data, int* wait)
 		{
 			statusRegister	= 0x81;
 		}
+	
+		else
+		{
+			updateDataLocation();
+		}
 	}
 
 	else if (0xd2 == port)
@@ -306,6 +316,11 @@ void FLOPPY::write_io8w(uint32_t addr, uint32_t data, int* wait)
 		if (false == floppyLoaded)
 		{
 			statusRegister	= 0x81;
+		}
+	
+		else
+		{
+			updateDataLocation();
 		}
 	}
 
@@ -373,6 +388,16 @@ uint32_t FLOPPY::read_io8w(uint32_t addr, int* wait)
 
 				statusRegister	= 0;
 
+				if ((DISK_SECTOR_SIZE - 1) == dataOffset % DISK_SECTOR_SIZE && true == seekNextSector)
+				{
+					if ((sectorRegister % MAX_TRACK_SECTORS) < MAX_TRACK_SECTORS - 1)
+					{
+						sectorRegister++;
+
+						updateDataLocation();
+					}
+				}
+
 				return	value;
 			}
 		}
@@ -423,5 +448,5 @@ void FLOPPY::endDiskReadEvent()
 
 void FLOPPY::updateDataLocation()
 {
-	dataOffset	= trackRegister * (MAX_TRACK_SECTORS * DISK_SECTOR_SIZE) + sectorRegister;
+	dataOffset	= trackRegister * (MAX_TRACK_SECTORS * DISK_SECTOR_SIZE) + sectorRegister * DISK_SECTOR_SIZE;
 }
