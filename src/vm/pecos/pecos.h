@@ -50,12 +50,9 @@ class DEVICE;
 class EVENT;
 
 class DATAREC;
-class I8251;
-class I8255;
 class IO;
 class SN76489AN;
 class TMS9918A;
-class UPD765A;
 class Z80;
 
 class KEYBOARD;
@@ -71,9 +68,6 @@ protected:
 	EVENT* event;
 	
 //	DATAREC* drec;
-//	I8251* sio;
-//	I8255* pio_k;
-//	I8255* pio_f;
 	IO* io;
 	SN76489AN* psg;
 	TMS9918A* vdp;

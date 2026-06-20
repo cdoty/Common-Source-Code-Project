@@ -20,7 +20,6 @@
 #include "../noise.h"
 #include "../sn76489an.h"
 #include "../tms9918a.h"
-#include "../upd765a.h"
 #include "../z80.h"
 
 #ifdef USE_DEBUGGER
@@ -46,11 +45,6 @@ VM::VM(EMU* parent_emu) : VM_TEMPLATE(parent_emu)
 //	drec->set_context_noise_play(new NOISE(this, emu));
 //	drec->set_context_noise_stop(new NOISE(this, emu));
 //	drec->set_context_noise_fast(new NOISE(this, emu));
-//	sio = new I8251(this, emu);
-//	pio_k = new I8255(this, emu);
-//	pio_k->set_device_name(_T("8255 PIO (Keyboard)"));
-//	pio_f = new I8255(this, emu);
-//	pio_f->set_device_name(_T("8255 PIO (Floppy I/F)"));
 	io = new IO(this, emu);
 	io->space = 0x100;
 	psg = new SN76489AN(this, emu);
@@ -59,9 +53,9 @@ VM::VM(EMU* parent_emu) : VM_TEMPLATE(parent_emu)
 	vdp->set_context_debugger(new DEBUGGER(this, emu));
 #endif
 	fdc = new FLOPPY(this, emu);
-//	fdc->set_context_noise_seek(new NOISE(this, emu));
-//	fdc->set_context_noise_head_down(new NOISE(this, emu));
-//	fdc->set_context_noise_head_up(new NOISE(this, emu));
+	fdc->set_context_noise_seek(new NOISE(this, emu));
+	fdc->set_context_noise_head_down(new NOISE(this, emu));
+	fdc->set_context_noise_head_up(new NOISE(this, emu));
 	cpu = new Z80(this, emu);
 	
 	key = new KEYBOARD(this, emu);
@@ -71,29 +65,20 @@ VM::VM(EMU* parent_emu) : VM_TEMPLATE(parent_emu)
 	event->set_context_cpu(cpu);
 	event->set_context_sound(psg);
 //	event->set_context_sound(drec);
-//	event->set_context_sound(fdc->get_context_noise_seek());
-//	event->set_context_sound(fdc->get_context_noise_head_down());
-//	event->set_context_sound(fdc->get_context_noise_head_up());
+	event->set_context_sound(fdc->get_context_noise_seek());
+	event->set_context_sound(fdc->get_context_noise_head_down());
+	event->set_context_sound(fdc->get_context_noise_head_up());
 //	event->set_context_sound(drec->get_context_noise_play());
 //	event->set_context_sound(drec->get_context_noise_stop());
 //	event->set_context_sound(drec->get_context_noise_fast());
 	
 //	drec->set_context_ear(pio_k, SIG_I8255_PORT_B, 0x80);
-//	pio_k->set_context_port_c(key, SIG_KEYBOARD_COLUMN, 0x07, 0);
-//	pio_k->set_context_port_c(drec, SIG_DATAREC_REMOTE, 0x08, 0);
-//	pio_k->set_context_port_c(drec, SIG_DATAREC_MIC, 0x10, 0);
-//	pio_f->set_context_port_c(fdc, SIG_UPD765A_MOTOR_NEG, 2, 0);
-//	pio_f->set_context_port_c(fdc, SIG_UPD765A_TC, 4, 0);
-//	pio_f->set_context_port_c(fdc, SIG_UPD765A_RESET, 8, 0);
 	
 	vdp->set_context_irq(cpu, SIG_CPU_IRQ, 1);
 	fdc->set_context_irq(cpu, SIG_CPU_IRQ, 1);
 	fdc->set_context_nmi(cpu, SIG_CPU_NMI, 1);
-//	fdc->set_context_irq(pio_f, SIG_I8255_PORT_A, 1);
-//	fdc->set_context_index(pio_f, SIG_I8255_PORT_A, 4);
 	
 	key->set_context_cpu(cpu);
-//	key->set_context_pio(pio_k);
 	
 	// cpu bus
 	cpu->set_context_mem(memory);
@@ -110,11 +95,6 @@ VM::VM(EMU* parent_emu) : VM_TEMPLATE(parent_emu)
 	io->set_iomap_single_rw(0xC0, memory);		// Port 0xC0 module 2 loading
 	io->set_iomap_range_rw(0x70, 0x71, vdp);
 	io->set_iomap_range_rw(0xd0, 0xd4, fdc);
-//	io->set_iomap_range_rw(0x9d, 0x9e, psg);
-//	io->set_iomap_range_rw(0xc0, 0xdf, pio_k);
-//	io->set_iomap_range_rw(0xe0, 0xe3, fdc);
-//	io->set_iomap_range_rw(0xe4, 0xe7, pio_f);
-//	io->set_iomap_range_rw(0xe8, 0xeb, sio);
 	
 	// initialize all devices
 	for(DEVICE* device = first_device; device; device = device->next_device) {
