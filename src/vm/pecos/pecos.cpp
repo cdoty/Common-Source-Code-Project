@@ -58,13 +58,12 @@ VM::VM(EMU* parent_emu) : VM_TEMPLATE(parent_emu)
 #ifdef USE_DEBUGGER
 	vdp->set_context_debugger(new DEBUGGER(this, emu));
 #endif
-//	fdc = new UPD765A(this, emu);
+	fdc = new FLOPPY(this, emu);
 //	fdc->set_context_noise_seek(new NOISE(this, emu));
 //	fdc->set_context_noise_head_down(new NOISE(this, emu));
 //	fdc->set_context_noise_head_up(new NOISE(this, emu));
 	cpu = new Z80(this, emu);
 	
-	floppy = new FLOPPY(this, emu);
 	key = new KEYBOARD(this, emu);
 	memory = new MEMORY(this, emu);
 	
@@ -88,8 +87,8 @@ VM::VM(EMU* parent_emu) : VM_TEMPLATE(parent_emu)
 //	pio_f->set_context_port_c(fdc, SIG_UPD765A_RESET, 8, 0);
 	
 	vdp->set_context_irq(cpu, SIG_CPU_IRQ, 1);
-	floppy->set_context_irq(cpu, SIG_CPU_IRQ, 1);
-	floppy->set_context_nmi(cpu, SIG_CPU_NMI, 1);
+	fdc->set_context_irq(cpu, SIG_CPU_IRQ, 1);
+	fdc->set_context_nmi(cpu, SIG_CPU_NMI, 1);
 //	fdc->set_context_irq(pio_f, SIG_I8255_PORT_A, 1);
 //	fdc->set_context_index(pio_f, SIG_I8255_PORT_A, 4);
 	
@@ -110,7 +109,7 @@ VM::VM(EMU* parent_emu) : VM_TEMPLATE(parent_emu)
 	io->set_iomap_single_rw(0x80, memory);		// Port 0x80 module 1 loading
 	io->set_iomap_single_rw(0xC0, memory);		// Port 0xC0 module 2 loading
 	io->set_iomap_range_rw(0x70, 0x71, vdp);
-	io->set_iomap_range_rw(0xd0, 0xd4, floppy);
+	io->set_iomap_range_rw(0xd0, 0xd4, fdc);
 //	io->set_iomap_range_rw(0x9d, 0x9e, psg);
 //	io->set_iomap_range_rw(0xc0, 0xdf, pio_k);
 //	io->set_iomap_range_rw(0xe0, 0xe3, fdc);
@@ -258,7 +257,6 @@ bool VM::is_cart_inserted(int drv)
 	}
 }
 
-#if 0
 void VM::open_floppy_disk(int drv, const _TCHAR* file_path, int bank)
 {
 	fdc->open_disk(drv, file_path, bank);
@@ -289,6 +287,7 @@ uint32_t VM::is_floppy_disk_accessed()
 	return fdc->read_signal(0);
 }
 
+#if 0
 void VM::play_tape(int drv, const _TCHAR* file_path)
 {
 	bool remote = drec->get_remote();

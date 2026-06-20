@@ -21,7 +21,7 @@
 #define SCREEN_HEIGHT		192
 #define TMS9918A_VRAM_SIZE	0x4000
 #define TMS9918A_LIMIT_SPRITES
-#define MAX_DRIVE		4
+#define MAX_DRIVE		1
 
 // device informations for win32
 #define USE_CART		2
@@ -77,12 +77,11 @@ protected:
 	IO* io;
 	SN76489AN* psg;
 	TMS9918A* vdp;
-//	UPD765A* fdc;
+	FLOPPY*	fdc;
 	Z80* cpu;
 	
 	KEYBOARD* key;
 	MEMORY* memory;
-	FLOPPY*	floppy;
 	
 public:
 	// ----------------------------------------
@@ -124,13 +123,13 @@ public:
 	void open_cart(int drv, const _TCHAR* file_path);
 	void close_cart(int drv);
 	bool is_cart_inserted(int drv);
-#if 0
 	void open_floppy_disk(int drv, const _TCHAR* file_path, int bank);
 	void close_floppy_disk(int drv);
 	bool is_floppy_disk_inserted(int drv);
 	void is_floppy_disk_protected(int drv, bool value);
 	bool is_floppy_disk_protected(int drv);
 	uint32_t is_floppy_disk_accessed();
+#if 0
 	void play_tape(int drv, const _TCHAR* file_path);
 	void rec_tape(int drv, const _TCHAR* file_path);
 	void close_tape(int drv);

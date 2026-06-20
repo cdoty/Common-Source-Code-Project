@@ -16,41 +16,24 @@ void FLOPPY::initialize()
 	trackRegister	= 0;
 	sectorRegister	= 0;
 	dataRegister	= 0;
-	stepIn			= false;
+	stepIn			= true;
 	readingSectors	= false;
-	seekNextSector	= false;
-	floppyLoaded	= false;
 	motorRunning	= false;
+	diskInserted	= false;
+	diskProtected	= false;
 
 	dataOffset	= 0;
 	readCount	= 0;
 
-	// load floppy disk
-	FILEIO* fio = new FILEIO();
-
-	if(fio->Fopen(create_local_path(_T("FloppyDisk.img")), FILEIO_READ_BINARY))
-	{
-		long	fileLength	= fio->FileLength();
-
-		fio->Fread(floppyDisk, fileLength, 1);
-		fio->Fclose();
-
-		floppyLoaded	= true;
-	}
-
-	else
-	{
-		floppyLoaded	= false;
-	}
-
-	delete	fio;
+	floppyDisk	= NULL;
+	floppySize	= 0;
 }
 
 void FLOPPY::event_callback(int event_id, int err)
 {
 	if (true == readingSectors)
 	{
-		if (dataOffset < sizeof(floppyDisk) && readCount > 0)
+		if (dataOffset < floppySize && readCount > 0)
 		{
 			write_signals(&outputs_nmi, 0xffffffff);
 		}
@@ -88,19 +71,21 @@ void FLOPPY::executeCommand(uint32_t data)
 #ifdef _FLOPPY_DEBUG_LOG
 				sprintf(szCommand, "Seek track 0\n");
 #endif
-				if (true == floppyLoaded)
+				if (true == diskInserted)
 				{
-					dataOffset		= 0;
-					statusRegister	= 0x04;
-
-					stepIn			= false;
-					sectorRegister	= 0;
-					trackRegister	= 0;
+					dataOffset	= 0;
+					stepIn		= true;
+					
+					setSectorRegister(0);
+					
+					statusRegister	= setTrackRegister(0);
+					statusRegister	|= (motorRunning ? 0x80 : 0x0);
 				}
 
 				else
 				{
 					statusRegister	= 0x00;
+					statusRegister	|= (motorRunning ? 0x80 : 0x0);
 				}
 
 				write_signals(&outputs_irq, 0xffffffff);
@@ -108,21 +93,22 @@ void FLOPPY::executeCommand(uint32_t data)
 
 			else
 			{
-				int	track	= data & 0x1F;
+				int	track	= dataRegister;
 
 				// Seek track in data register
 #ifdef _FLOPPY_DEBUG_LOG
 				sprintf(szCommand, "Seek track %d\n", track);
 #endif
-				if (true == floppyLoaded && track >= 0 && track < MAX_DISK_TRACKS)
+				if (true == diskInserted && track >= 0 && track < MAX_DISK_TRACKS)
 				{
-					statusRegister	= 0x00;
-					trackRegister	= track;
+					statusRegister	= setTrackRegister(track);
+					statusRegister	|= (motorRunning ? 0x80 : 0x0);
 				}
 
 				else
 				{
-					statusRegister	= 0x81;
+					statusRegister	= 0x01;
+					statusRegister	|= (motorRunning ? 0x80 : 0x0);
 				}
 
 				write_signals(&outputs_irq, 0xffffffff);			
@@ -137,36 +123,35 @@ void FLOPPY::executeCommand(uint32_t data)
 #ifdef _FLOPPY_DEBUG_LOG
 			sprintf(szCommand, "Step track\n");
 #endif
-			if (true == floppyLoaded)
+			if (true == diskInserted)
 			{
 				if (false == stepIn)
 				{
 					if (trackRegister > 0)
 					{
-						trackRegister--;
-
-						statusRegister	= 0x00;
+						statusRegister	= setTrackRegister(trackRegister - 1);
+						statusRegister	|= (motorRunning ? 0x80 : 0x0);
 					}
 
 					else
 					{
-						statusRegister	= 0x81;
+						statusRegister	= 0x01;
+						statusRegister	|= (motorRunning ? 0x80 : 0x0);
 					}
-
 				}
 
 				else
 				{
 					if (trackRegister < MAX_DISK_TRACKS - 1)
 					{
-						trackRegister--;
-
-						statusRegister	= 0x00;
+						statusRegister	= setTrackRegister(trackRegister + 1);
+						statusRegister	|= (motorRunning ? 0x80 : 0x0);
 					}
 
 					else
 					{
-						statusRegister	= 0x81;
+						statusRegister	= 0x01;
+						statusRegister	|= (motorRunning ? 0x80 : 0x0);
 					}
 				}
 
@@ -207,9 +192,7 @@ void FLOPPY::executeCommand(uint32_t data)
 #ifdef _FLOPPY_DEBUG_LOG
 			sprintf(szCommand, "Read sector %d\n", sectorRegister);
 #endif
-			seekNextSector	= (data & 0x10) != 0;
-
-			if (true == floppyLoaded)
+			if (true == diskInserted)
 			{
 				readCount		= DISK_SECTOR_SIZE;
 				statusRegister	= 0x00;
@@ -231,8 +214,6 @@ void FLOPPY::executeCommand(uint32_t data)
 #ifdef _FLOPPY_DEBUG_LOG
 			sprintf(szCommand, "Write sector %d\n", sectorRegister);
 #endif
-			seekNextSector	= (data & 0x10) != 0;
-
 			break;
 
 		case 6:
@@ -285,6 +266,76 @@ void FLOPPY::executeCommand(uint32_t data)
 #endif
 }
 
+void FLOPPY::open_disk(int drv, const _TCHAR* file_path, int bank)
+{
+	if(drv < MAX_DRIVE) {
+		diskInserted	= false;
+
+		if (floppyDisk != NULL)
+		{
+			free(floppyDisk);
+
+			floppyDisk	= NULL;
+		}
+
+		// load floppy disk
+		FILEIO* fio = new FILEIO();
+
+		if(fio->Fopen(create_absolute_path(file_path), FILEIO_READ_BINARY))
+		{
+			floppySize	= fio->FileLength();
+			
+			if (MAX_DISK_TRACKS * MAX_TRACK_SECTORS * DISK_SECTOR_SIZE == floppySize)
+			{
+				floppyDisk = (uint8_t *)malloc(floppySize);
+
+				fio->Fread(floppyDisk, floppySize, 1);
+
+				diskInserted	= true;
+			}
+
+			fio->Fclose();
+		}
+
+		delete	fio;
+	}
+}
+
+void FLOPPY::close_disk(int drv)
+{
+	if(drv < MAX_DRIVE && diskInserted) {
+		diskInserted	= false;
+
+		if (floppyDisk != NULL)
+		{
+			free(floppyDisk);
+
+			floppyDisk	= NULL;
+			floppySize	= 0;
+		}
+	}
+}
+
+bool FLOPPY::is_disk_inserted()
+{
+	return	diskInserted;
+}
+
+bool FLOPPY::is_disk_inserted(int drv)
+{
+	return	diskInserted;
+}
+
+void FLOPPY::is_disk_protected(int drv, bool value)
+{
+	diskProtected	= value;
+}
+
+bool FLOPPY::is_disk_protected(int drv)
+{
+	return	diskProtected;
+}
+
 void FLOPPY::write_io8w(uint32_t addr, uint32_t data, int* wait)
 {
 	uint8_t	port	= addr & 0xFF;
@@ -296,31 +347,27 @@ void FLOPPY::write_io8w(uint32_t addr, uint32_t data, int* wait)
 
 	else if (0xd1 == port)
 	{
-		trackRegister	= data;
-
-		if (false == floppyLoaded)
+		if (false == diskInserted)
 		{
 			statusRegister	= 0x81;
 		}
 	
 		else
 		{
-			updateDataLocation();
+			statusRegister	= setTrackRegister(data);
 		}
 	}
 
 	else if (0xd2 == port)
 	{
-		sectorRegister	= data;
-
-		if (false == floppyLoaded)
+		if (false == diskInserted)
 		{
 			statusRegister	= 0x81;
 		}
 	
 		else
 		{
-			updateDataLocation();
+			statusRegister	= setSectorRegister(data);
 		}
 	}
 
@@ -328,7 +375,7 @@ void FLOPPY::write_io8w(uint32_t addr, uint32_t data, int* wait)
 	{
 		dataRegister	= data;
 
-		if (false == floppyLoaded)
+		if (false == diskInserted)
 		{
 			statusRegister	= 0x81;
 		}
@@ -338,7 +385,7 @@ void FLOPPY::write_io8w(uint32_t addr, uint32_t data, int* wait)
 	{
 		motorRunning	= data & 0x08;	// Motor control? Unsure of actual bit or port. Bit 0 might be reset.
 
-		if (false == floppyLoaded)
+		if (false == diskInserted)
 		{
 			statusRegister	= 0x81;
 		}
@@ -377,9 +424,9 @@ uint32_t FLOPPY::read_io8w(uint32_t addr, int* wait)
 
 	else if (0xd3 == port)
 	{
-		if (true == floppyLoaded)
+		if (true == diskInserted)
 		{
-			if (dataOffset < sizeof(floppyDisk) && readCount > 0)
+			if (dataOffset < floppySize && readCount > 0)
 			{
 				uint32_t	value	= floppyDisk[dataOffset];
 
@@ -387,16 +434,6 @@ uint32_t FLOPPY::read_io8w(uint32_t addr, int* wait)
 				readCount--;
 
 				statusRegister	= 0;
-
-				if ((DISK_SECTOR_SIZE - 1) == dataOffset % DISK_SECTOR_SIZE && true == seekNextSector)
-				{
-					if ((sectorRegister % MAX_TRACK_SECTORS) < MAX_TRACK_SECTORS - 1)
-					{
-						sectorRegister++;
-
-						updateDataLocation();
-					}
-				}
 
 				return	value;
 			}
@@ -444,6 +481,56 @@ void FLOPPY::endDiskReadEvent()
 	readingSectors	= false;
 
 	cancel_event(this, readEventID);
+}
+
+uint8_t FLOPPY::setTrackRegister(int track)
+{
+	uint8_t	status;
+
+	if (track < MAX_DISK_TRACKS)
+	{
+		trackRegister	= track;
+		
+		if (0 == track)
+		{
+			status	= 0x04;
+		}
+
+		else
+		{
+			status	= 0x00;
+		}
+	}
+
+	else
+	{
+		status	= 0x10;
+
+		write_signals(&outputs_irq, 0xffffffff);			
+	}
+
+	updateDataLocation();
+
+	return	status;
+}
+
+uint8_t FLOPPY::setSectorRegister(int sector)
+{
+	uint8_t	status	= 0x00;
+
+	sectorRegister	= sector;
+
+	if (sector < MAX_TRACK_SECTORS)
+	{
+		updateDataLocation();
+	}
+
+	else
+	{
+		status	= 0x40;
+	}
+
+	return	status;
 }
 
 void FLOPPY::updateDataLocation()

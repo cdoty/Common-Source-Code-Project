@@ -1,4 +1,7 @@
 6/19/2026
+[PECOS] Implemented multi sector loading. This allows a raw disk image to be loaded.
+
+6/19/2026
 [PECOS] Added arrow key support.
 
 6/16/2026
